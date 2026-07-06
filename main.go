@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	file := "assets/images.jpeg"
+	file := "assets/image7.jpg"
 
 	openImg, err := os.Open(file)
 	if err != nil {
@@ -25,8 +25,9 @@ func main() {
 		log.Fatalf("Failed to Decode image: %v", err)
 	}
 
-	grid := buildBrightnessGrid(img, 4)
-	canvas := renderDots(grid, 4)
+	grid := buildBrightnessGrid(img, 3)
+	mask := buildMask(grid)
+	canvas := renderDots(grid, mask, 3)
 
 	output, err := os.Create("output.png")
 	if err != nil {
@@ -35,7 +36,5 @@ func main() {
 	defer output.Close()
 	png.Encode(output, canvas)
 
-	fmt.Println(averageSaturation(img, 250, 150, 8))
-	fmt.Println(averageSaturation(img, 0, 0, 8))
 	fmt.Println(format)
 }
