@@ -1,3 +1,3 @@
-module monodot.com
+module github.com/Joshua504/Monodot
 
-go 1.26.1
+go 1.26.4

@@ -1,4 +1,4 @@
-package main
+package processor
 
 func buildMask(grid [][]float64) [][]bool {
 	rows := len(grid)

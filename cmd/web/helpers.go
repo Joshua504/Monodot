@@ -1,0 +1,88 @@
+package main
+
+import (
+	"errors"
+	"io"
+	"mime/multipart"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
+)
+
+func validateExtension(filename string) error {
+	ext := strings.ToLower(filepath.Ext(filename))
+
+	switch ext {
+	case ".jpg", ".jpeg", ".png":
+		return nil
+	default:
+		return errors.New("File not supported")
+	}
+}
+
+func validateContentType(file multipart.File) error {
+	buff := make([]byte, 512)
+
+	_, err := file.Read(buff)
+	if err != nil && err != io.EOF {
+		return err
+	}
+
+	contentType := http.DetectContentType(buff)
+
+	switch contentType {
+	case "image/png", "image/jpeg":
+		// allowed
+	default:
+		return errors.New("Only PNG and JPEG images are allowed.")
+	}
+
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func saveUpload(file multipart.File, uploadPath string) error {
+	dst, err := os.Create(uploadPath)
+	if err != nil {
+		return err
+	}
+	defer dst.Close()
+
+	_, err = io.Copy(dst, file)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func parseCellSize(r *http.Request) int {
+	cellSize := 3
+
+	if v := r.FormValue("cellsize"); v != "" {
+		n, err := strconv.Atoi(v)
+		if err == nil && n > 0 {
+			cellSize = n
+		}
+	}
+
+	return cellSize
+}
+
+func buildOutputPath(fileName string) string {
+	name := strings.TrimSuffix(
+		fileName,
+		filepath.Ext(fileName),
+	)
+
+	return filepath.Join(
+		"outputs",
+		name+"_dot.png",
+	)
+}
