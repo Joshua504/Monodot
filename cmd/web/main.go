@@ -2,7 +2,6 @@ package main
 
 import (
 	"html/template"
-	"log"
 	"net/http"
 	"path/filepath"
 
@@ -14,26 +13,12 @@ var tmpl = template.Must(
 
 func main() {
 	startCleanupJob()
-	mux := http.NewServeMux()
 
-	mux.Handle(
-		"/outputs/",
-		http.StripPrefix(
-			"/outputs/",
-			http.FileServer(http.Dir("outputs")),
-		),
-	)
+	server := newServer()
 
-	mux.HandleFunc("/", homeHandler)
-	mux.HandleFunc("/generate", generateHandler)
-	mux.HandleFunc("/result", resultHandler)
+	go startServer(server)
 
-	log.Print("STARTING AND LISTENING TO SERVER ON____ :8080")
-
-	err := http.ListenAndServe(":8080", mux)
-	if err != nil {
-		log.Fatal(err)
-	}
+	waitForShutdown(server)
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
