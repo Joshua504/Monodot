@@ -5,14 +5,14 @@ import (
 	"net/http"
 )
 
-func newServer() *http.Server {
+func newServer(cfg *Config) *http.Server {
 	mux := http.NewServeMux()
 
 	mux.Handle(
 		"/outputs/",
 		http.StripPrefix(
 			"/outputs/",
-			http.FileServer(http.Dir("outputs")),
+			http.FileServer(http.Dir(cfg.OutputDir)),
 		),
 	)
 
@@ -21,8 +21,8 @@ func newServer() *http.Server {
 	mux.HandleFunc("/result", resultHandler)
 
 	return &http.Server{
-		Addr:    ":8080",
-		Handler: mux,
+		Addr:    cfg.Port,
+		Handler: loggingMiddleware(mux),
 	}
 }
 

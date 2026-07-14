@@ -2,6 +2,7 @@ package main
 
 import (
 	"html/template"
+	"log"
 	"net/http"
 	"path/filepath"
 
@@ -12,9 +13,11 @@ var tmpl = template.Must(
 	template.ParseGlob("templates/*.html"))
 
 func main() {
+	cfg := NewConfig()
+
 	startCleanupJob()
 
-	server := newServer()
+	server := newServer(cfg)
 
 	go startServer(server)
 
@@ -31,18 +34,24 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func generateHandler(w http.ResponseWriter, r *http.Request) {
+	logger := requestLogger(r)
+	logger.Println("Upload request received")
+
 	if r.Method != http.MethodPost {
+		log.Printf("Invalid method: %s", r.Method)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
+		logger.Printf("Failed to parse multipart form: %v", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	file, header, err := r.FormFile("image")
+	logger.Printf("Upload received: %s", header.Filename)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -51,12 +60,14 @@ func generateHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = validateExtension(header.Filename)
 	if err != nil {
+		logger.Printf("Extension validation failed: %v", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = validateContentType(file)
 	if err != nil {
+		logger.Printf("MIME validation failed: %v", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -67,6 +78,7 @@ func generateHandler(w http.ResponseWriter, r *http.Request) {
 	outputPath := buildOutputPath(uploadedFileName)
 
 	err = saveUpload(file, uploadPath)
+	logger.Printf("Upload saved: %s", uploadPath)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -75,11 +87,15 @@ func generateHandler(w http.ResponseWriter, r *http.Request) {
 	cellsize := parseCellSize(r)
 
 	err = processor.Generate(uploadPath, outputPath, cellsize)
+	log.Printf("Starting image generation")
 	if err != nil {
+		logger.Printf("Image generation failed: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	logger.Printf("Image generated successfully: %s", outputPath)
 
+	logger.Printf("Redirecting to result page")
 	http.Redirect(
 		w,
 		r,

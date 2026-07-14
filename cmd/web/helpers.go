@@ -86,3 +86,18 @@ func buildOutputPath(fileName string) string {
 		name+"_dot.png",
 	)
 }
+
+func statusColor(code int) string {
+	switch {
+	case code >= 200 && code < 300:
+		return "\033[32m" // Green
+	case code >= 300 && code < 400:
+		return "\033[33m" // Yellow
+	case code >= 400 && code < 500:
+		return "\033[34m" // Blue
+	default:
+		return "\033[31m" // Red
+	}
+}
+
+const reset = "\033[0m"
