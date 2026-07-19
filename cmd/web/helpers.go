@@ -62,8 +62,8 @@ func saveUpload(file multipart.File, uploadPath string) error {
 	return nil
 }
 
-func parseCellSize(r *http.Request) int {
-	cellSize := 3
+func parseCellSize(r *http.Request, defaultSize int) int {
+	cellSize := defaultSize
 
 	if v := r.FormValue("cellsize"); v != "" {
 		n, err := strconv.Atoi(v)
@@ -75,14 +75,14 @@ func parseCellSize(r *http.Request) int {
 	return cellSize
 }
 
-func buildOutputPath(fileName string) string {
+func buildOutputPath(outputDir, uploadedFileName string) string {
 	name := strings.TrimSuffix(
-		fileName,
-		filepath.Ext(fileName),
+		uploadedFileName,
+		filepath.Ext(uploadedFileName),
 	)
 
 	return filepath.Join(
-		"outputs",
+		outputDir,
 		name+"_dot.png",
 	)
 }

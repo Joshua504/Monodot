@@ -24,16 +24,15 @@ func main() {
 	waitForShutdown(server)
 }
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) homeHandler(w http.ResponseWriter, r *http.Request) {
 	err := tmpl.Execute(w, nil)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 }
 
-func generateHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) generateHandler(w http.ResponseWriter, r *http.Request) {
 	logger := requestLogger(r)
 	logger.Println("Upload request received")
 
@@ -73,9 +72,9 @@ func generateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	uploadedFileName := uniqueName(header.Filename)
-	uploadPath := filepath.Join("uploads", uploadedFileName)
+	uploadPath := filepath.Join(app.config.UploadDir, uploadedFileName)
 
-	outputPath := buildOutputPath(uploadedFileName)
+	outputPath := buildOutputPath(app.config.OutputDir, uploadedFileName)
 
 	err = saveUpload(file, uploadPath)
 	logger.Printf("Upload saved: %s", uploadPath)
@@ -84,7 +83,7 @@ func generateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cellsize := parseCellSize(r)
+	cellsize := parseCellSize(r, app.config.DefaultCellSize)
 
 	err = processor.Generate(uploadPath, outputPath, cellsize)
 	log.Printf("Starting image generation")
@@ -104,7 +103,7 @@ func generateHandler(w http.ResponseWriter, r *http.Request) {
 	)
 }
 
-func resultHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) resultHandler(w http.ResponseWriter, r *http.Request) {
 	image := r.URL.Query().Get("image")
 
 	err := tmpl.ExecuteTemplate(w, "result.html", struct{ Image string }{Image: image})

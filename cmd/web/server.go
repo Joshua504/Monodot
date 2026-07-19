@@ -6,6 +6,7 @@ import (
 )
 
 func newServer(cfg *Config) *http.Server {
+	app := &application{config: cfg}
 	mux := http.NewServeMux()
 
 	mux.Handle(
@@ -16,9 +17,9 @@ func newServer(cfg *Config) *http.Server {
 		),
 	)
 
-	mux.HandleFunc("/", homeHandler)
-	mux.HandleFunc("/generate", generateHandler)
-	mux.HandleFunc("/result", resultHandler)
+	mux.HandleFunc("/", app.homeHandler)
+	mux.HandleFunc("/generate", app.generateHandler)
+	mux.HandleFunc("/result", app.resultHandler)
 
 	return &http.Server{
 		Addr:    cfg.Port,
