@@ -3,10 +3,12 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 )
 
 func newServer(cfg *Config) *http.Server {
-	app := &application{config: cfg}
+	logger := log.New(os.Stdout, "", log.LstdFlags)
+	app := &application{config: cfg, logger: logger}
 	mux := http.NewServeMux()
 
 	mux.Handle(
@@ -23,7 +25,7 @@ func newServer(cfg *Config) *http.Server {
 
 	return &http.Server{
 		Addr:    cfg.Port,
-		Handler: loggingMiddleware(mux),
+		Handler: app.recoveryMiddleware(app.loggingMiddleware(app.securityHeadersMiddleware(mux))),
 	}
 }
 

@@ -24,7 +24,7 @@ func (r *responseRecorder) Write(b []byte) (int, error) {
 	return n, err
 }
 
-func loggingMiddleware(next http.Handler) http.Handler {
+func (app *application) loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		start := time.Now()

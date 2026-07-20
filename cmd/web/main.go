@@ -33,41 +33,40 @@ func (app *application) homeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) generateHandler(w http.ResponseWriter, r *http.Request) {
-	logger := requestLogger(r)
-	logger.Println("Upload request received")
+	app.logger.Println("Upload request received")
 
 	if r.Method != http.MethodPost {
 		log.Printf("Invalid method: %s", r.Method)
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
 
-	err := r.ParseMultipartForm(10 << 20)
+	err := r.ParseMultipartForm(app.config.MaxUploadSize)
 	if err != nil {
-		logger.Printf("Failed to parse multipart form: %v", err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		app.logger.Printf("Failed to parse multipart form: %v", err)
+		app.validationError(w, "Invalid multipart for")
 		return
 	}
 
 	file, header, err := r.FormFile("image")
-	logger.Printf("Upload received: %s", header.Filename)
+	app.logger.Printf("Upload received: %s", header.Filename)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		app.validationError(w, "No image was uploaded.")
 		return
 	}
 	defer file.Close()
 
 	err = validateExtension(header.Filename)
 	if err != nil {
-		logger.Printf("Extension validation failed: %v", err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		app.logger.Printf("Extension validation failed: %v", err)
+		app.validationError(w, err.Error())
 		return
 	}
 
 	err = validateContentType(file)
 	if err != nil {
-		logger.Printf("MIME validation failed: %v", err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		app.logger.Printf("MIME validation failed: %v", err)
+		app.validationError(w, err.Error())
 		return
 	}
 
@@ -77,9 +76,9 @@ func (app *application) generateHandler(w http.ResponseWriter, r *http.Request) 
 	outputPath := buildOutputPath(app.config.OutputDir, uploadedFileName)
 
 	err = saveUpload(file, uploadPath)
-	logger.Printf("Upload saved: %s", uploadPath)
+	app.logger.Printf("Upload saved: %s", uploadPath)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.serverError(w, err)
 		return
 	}
 
@@ -88,13 +87,13 @@ func (app *application) generateHandler(w http.ResponseWriter, r *http.Request) 
 	err = processor.Generate(uploadPath, outputPath, cellsize)
 	log.Printf("Starting image generation")
 	if err != nil {
-		logger.Printf("Image generation failed: %v", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.logger.Printf("Image generation failed: %v", err)
+		app.serverError(w, err)
 		return
 	}
-	logger.Printf("Image generated successfully: %s", outputPath)
+	app.logger.Printf("Image generated successfully: %s", outputPath)
 
-	logger.Printf("Redirecting to result page")
+	app.logger.Printf("Redirecting to result page")
 	http.Redirect(
 		w,
 		r,
