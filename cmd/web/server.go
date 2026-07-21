@@ -8,7 +8,16 @@ import (
 
 func newServer(cfg *Config) *http.Server {
 	logger := log.New(os.Stdout, "", log.LstdFlags)
-	app := &application{config: cfg, logger: logger}
+	templateCache, err := newTemplateCache()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	app := &application{
+		config:        cfg,
+		logger:        logger,
+		templateCache: templateCache,
+	}
 	mux := http.NewServeMux()
 
 	mux.Handle(
@@ -22,6 +31,7 @@ func newServer(cfg *Config) *http.Server {
 	mux.HandleFunc("/", app.homeHandler)
 	mux.HandleFunc("/generate", app.generateHandler)
 	mux.HandleFunc("/result", app.resultHandler)
+	mux.HandleFunc("/health", app.healthHandler)
 
 	return &http.Server{
 		Addr:    cfg.Port,

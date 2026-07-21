@@ -12,7 +12,12 @@ func (app *application) clientError(w http.ResponseWriter, status int) {
 }
 
 func (app *application) notFound(w http.ResponseWriter) {
-	app.clientError(w, http.StatusNotFound)
+	app.render(
+		w,
+		http.StatusNotFound,
+		"404.html",
+		nil,
+	)
 }
 
 func (app *application) validationError(w http.ResponseWriter, message string) {

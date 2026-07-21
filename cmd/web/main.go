@@ -1,7 +1,6 @@
 package main
 
 import (
-	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -9,8 +8,8 @@ import (
 	"github.com/Joshua504/Monodot/internal/processor"
 )
 
-var tmpl = template.Must(
-	template.ParseGlob("templates/*.html"))
+//var tmpl = template.Must(
+//	template.ParseGlob("templates/*.html"))
 
 func main() {
 	cfg := NewConfig()
@@ -25,11 +24,12 @@ func main() {
 }
 
 func (app *application) homeHandler(w http.ResponseWriter, r *http.Request) {
-	err := tmpl.Execute(w, nil)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	app.render(
+		w,
+		http.StatusOK,
+		"index.html",
+		nil,
+	)
 }
 
 func (app *application) generateHandler(w http.ResponseWriter, r *http.Request) {
@@ -105,9 +105,22 @@ func (app *application) generateHandler(w http.ResponseWriter, r *http.Request) 
 func (app *application) resultHandler(w http.ResponseWriter, r *http.Request) {
 	image := r.URL.Query().Get("image")
 
-	err := tmpl.ExecuteTemplate(w, "result.html", struct{ Image string }{Image: image})
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	data := map[string]string{
+		"Image": image,
 	}
+
+	app.render(
+		w,
+		http.StatusOK,
+		"result.html",
+		data,
+	)
+}
+
+func (app *application) healthHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	w.WriteHeader(http.StatusOK)
+
+	w.Write([]byte(`{"status":"ok"}`))
 }
