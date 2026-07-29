@@ -4,8 +4,6 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-
-	"github.com/Joshua504/Monodot/internal/processor"
 )
 
 //var tmpl = template.Must(
@@ -49,11 +47,11 @@ func (app *application) generateHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	file, header, err := r.FormFile("image")
-	app.logger.Printf("Upload received: %s", header.Filename)
 	if err != nil {
 		app.validationError(w, "No image was uploaded.")
 		return
 	}
+	app.logger.Printf("Upload received: %s", header.Filename)
 	defer file.Close()
 
 	err = validateExtension(header.Filename)
@@ -84,7 +82,11 @@ func (app *application) generateHandler(w http.ResponseWriter, r *http.Request) 
 
 	cellsize := parseCellSize(r, app.config.DefaultCellSize)
 
-	err = processor.Generate(uploadPath, outputPath, cellsize)
+	err = app.imageGenerator(
+		uploadPath,
+		outputPath,
+		cellsize,
+	)
 	log.Printf("Starting image generation")
 	if err != nil {
 		app.logger.Printf("Image generation failed: %v", err)
@@ -122,5 +124,8 @@ func (app *application) healthHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 
-	w.Write([]byte(`{"status":"ok"}`))
+	_, err := w.Write([]byte(`{"status":"ok"}`))
+	if err != nil {
+		app.logger.Printf("failed to write health response: %v", err)
+	}
 }

@@ -5,15 +5,18 @@ import (
 	"path/filepath"
 )
 
-func newTemplateCache() (map[string]*template.Template, error) {
+func newTemplateCache(templateDir string) (map[string]*template.Template, error) {
 	cache := make(map[string]*template.Template)
+	root := projectRoot()
 
-	pages, err := filepath.Glob("./templates/pages/*.html")
+	templateDir = filepath.Join(root, templateDir)
+
+	pages, err := filepath.Glob(filepath.Join(templateDir, "pages", "*.html"))
 	if err != nil {
 		return nil, err
 	}
 
-	base := "./templates/base.html"
+	base := filepath.Join(templateDir, "base.html")
 
 	for _, page := range pages {
 

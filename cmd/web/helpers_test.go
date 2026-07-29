@@ -162,5 +162,12 @@ func TestBuildOutputPath(t *testing.T) {
 }
 
 func TestUniqueName(t *testing.T) {
+	filename := "image.png"
 
+	first := uniqueName(filename)
+	second := uniqueName(filename)
+
+	if first == second {
+		t.Error("expected unique filenames")
+	}
 }

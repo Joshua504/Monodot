@@ -6,7 +6,8 @@ import (
 )
 
 type application struct {
-	config        *Config
-	logger        *log.Logger
-	templateCache map[string]*template.Template
+	config         *Config
+	logger         *log.Logger
+	templateCache  map[string]*template.Template
+	imageGenerator func(string, string, int) error
 }

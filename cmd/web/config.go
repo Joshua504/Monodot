@@ -9,6 +9,7 @@ type Config struct {
 	Port            string
 	UploadDir       string
 	OutputDir       string
+	TemplateDir     string
 	DefaultCellSize int
 	MaxUploadSize   int64
 }
@@ -18,6 +19,7 @@ func NewConfig() *Config {
 		Port:            getEnv("PORT", ":8080"),
 		UploadDir:       getEnv("UPLOAD_DIR", "uploads"),
 		OutputDir:       getEnv("OUTPUT_DIR", "outputs"),
+		TemplateDir:     getEnv("TEMPLATE_DIR", "templates"),
 		DefaultCellSize: getEnvInt("DEFAULT_CELL_SIZE", 3),
 		MaxUploadSize:   getEnvInt64("MAX_UPLOAD_SIZE", 10<<20),
 	}

@@ -4,19 +4,22 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/Joshua504/Monodot/internal/processor"
 )
 
 func newServer(cfg *Config) *http.Server {
 	logger := log.New(os.Stdout, "", log.LstdFlags)
-	templateCache, err := newTemplateCache()
+	templateCache, err := newTemplateCache(cfg.TemplateDir)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	app := &application{
-		config:        cfg,
-		logger:        logger,
-		templateCache: templateCache,
+		config:         cfg,
+		logger:         logger,
+		templateCache:  templateCache,
+		imageGenerator: processor.Generate,
 	}
 	mux := http.NewServeMux()
 
