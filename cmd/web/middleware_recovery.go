@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"runtime/debug"
 )
 
 func (app *application) recoveryMiddleware(next http.Handler) http.Handler {
@@ -11,10 +10,9 @@ func (app *application) recoveryMiddleware(next http.Handler) http.Handler {
 		defer func() {
 			if err := recover(); err != nil {
 
-				app.logger.Printf(
-					"PANIC: %v\n%s",
-					err,
-					debug.Stack(),
+				app.logger.Error(
+					"Recovered panic",
+					"error", err,
 				)
 
 				app.serverError(w, err)

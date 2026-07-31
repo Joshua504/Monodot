@@ -13,7 +13,10 @@ func (app *application) render(
 ) {
 	tmpl, ok := app.templateCache[page]
 	if !ok {
-		app.logger.Printf("Template %q does not exist", page)
+		app.logger.Error(
+			"Template not found",
+			"template", page,
+		)
 
 		http.Error(
 			w,
@@ -27,9 +30,10 @@ func (app *application) render(
 
 	err := tmpl.ExecuteTemplate(&buf, "base", data)
 	if err != nil {
-		app.logger.Printf(
-			"Template execute error: %v",
-			err,
+		app.logger.Error(
+			"Template execution failed",
+			"template", page,
+			"error", err,
 		)
 
 		http.Error(
@@ -44,9 +48,10 @@ func (app *application) render(
 
 	_, err = buf.WriteTo(w)
 	if err != nil {
-		app.logger.Printf(
-			"Response write error: %v",
-			err,
+		app.logger.Error(
+			"Failed to write response",
+			"template", page,
+			"error", err,
 		)
 	}
 }

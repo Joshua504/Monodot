@@ -3,8 +3,16 @@ package main
 import "net/http"
 
 func (app *application) serverError(w http.ResponseWriter, err any) {
-	app.logger.Printf("Server Error: %v", err)
-	http.Error(w, "Something went wrong on our end.", http.StatusInternalServerError)
+	app.logger.Error(
+		"Server error",
+		"error", err,
+	)
+
+	http.Error(
+		w,
+		"Something went wrong on our end.",
+		http.StatusInternalServerError,
+	)
 }
 
 func (app *application) clientError(w http.ResponseWriter, status int) {
@@ -21,6 +29,14 @@ func (app *application) notFound(w http.ResponseWriter) {
 }
 
 func (app *application) validationError(w http.ResponseWriter, message string) {
-	app.logger.Printf("VALIDATION ERROR: %s", message)
-	http.Error(w, message, http.StatusBadRequest)
+	app.logger.Warn(
+		"Validation error",
+		"message", message,
+	)
+
+	http.Error(
+		w,
+		message,
+		http.StatusBadRequest,
+	)
 }

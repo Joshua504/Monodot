@@ -2,12 +2,12 @@ package main
 
 import (
 	"html/template"
-	"log"
+	"log/slog"
 )
 
 type application struct {
 	config         *Config
-	logger         *log.Logger
+	logger         *slog.Logger
 	templateCache  map[string]*template.Template
 	imageGenerator func(string, string, int) error
 }

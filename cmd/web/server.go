@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 
@@ -9,7 +10,15 @@ import (
 )
 
 func newServer(cfg *Config) *http.Server {
-	logger := log.New(os.Stdout, "", log.LstdFlags)
+	logger := slog.New(
+		slog.NewTextHandler(
+			os.Stdout,
+			&slog.HandlerOptions{
+				Level: slog.LevelInfo,
+			},
+		),
+	)
+
 	templateCache, err := newTemplateCache(cfg.TemplateDir)
 	if err != nil {
 		log.Fatal(err)

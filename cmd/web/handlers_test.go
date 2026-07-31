@@ -5,12 +5,11 @@ import (
 	"image"
 	"image/png"
 	"io"
-	"log"
+	"log/slog"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"os"
 	"strings"
 	"testing"
 )
@@ -25,7 +24,12 @@ func newTestApplication(t *testing.T) *application {
 		t.Fatal(err)
 	}
 
-	logger := log.New(io.Discard, "", 0)
+	logger := slog.New(
+		slog.NewTextHandler(
+			io.Discard,
+			nil,
+		),
+	)
 
 	return &application{
 		config:        cfg,
@@ -337,8 +341,13 @@ func TestGenerateHandlerSuccess(t *testing.T) {
 	called := false
 
 	app := &application{
-		config:        cfg,
-		logger:        log.New(os.Stdout, "", log.LstdFlags),
+		config: cfg,
+		logger: slog.New(
+			slog.NewTextHandler(
+				io.Discard,
+				nil,
+			),
+		),
 		templateCache: cache,
 		imageGenerator: func(input, output string, cellSize int) error {
 			called = true
@@ -398,5 +407,7 @@ func TestGenerateHandlerSuccess(t *testing.T) {
 		)
 	}
 
-	_ = called
+	if !called {
+		t.Fatal("expected image generator to be called")
+	}
 }

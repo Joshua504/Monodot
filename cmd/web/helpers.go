@@ -48,6 +48,10 @@ func validateContentType(file multipart.File) error {
 }
 
 func saveUpload(file multipart.File, uploadPath string) error {
+	if err := os.MkdirAll(filepath.Dir(uploadPath), 0755); err != nil {
+		return err
+	}
+
 	dst, err := os.Create(uploadPath)
 	if err != nil {
 		return err
