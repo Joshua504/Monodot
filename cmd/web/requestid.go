@@ -24,11 +24,3 @@ func withRequestID(r *http.Request, id string) *http.Request {
 	ctx := context.WithValue(r.Context(), requestIDKey, id)
 	return r.WithContext(ctx)
 }
-
-func getRequestID(r *http.Request) string {
-	id, ok := r.Context().Value(requestIDKey).(string)
-	if !ok {
-		return "unknown"
-	}
-	return id
-}

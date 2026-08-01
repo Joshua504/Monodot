@@ -61,7 +61,14 @@ func (app *application) generateHandler(w http.ResponseWriter, r *http.Request) 
 		"Upload received",
 		"filename", header.Filename,
 	)
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			app.logger.Error(
+				"failed to close uploaded file",
+				"error", err,
+			)
+		}
+	}()
 
 	err = validateExtension(header.Filename)
 	if err != nil {

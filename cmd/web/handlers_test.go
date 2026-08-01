@@ -50,7 +50,11 @@ func TestHealthHandler(t *testing.T) {
 	app.healthHandler(rr, req)
 
 	res := rr.Result()
-	defer res.Body.Close()
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}()
 
 	if res.StatusCode != http.StatusOK {
 		t.Errorf("expected status %d, got %d",
@@ -94,7 +98,11 @@ func TestHomeHandler(t *testing.T) {
 	app.homeHandler(rr, req)
 
 	res := rr.Result()
-	defer res.Body.Close()
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}()
 
 	if res.StatusCode != http.StatusOK {
 		t.Fatalf(
@@ -134,7 +142,11 @@ func TestResultHandler(t *testing.T) {
 	app.resultHandler(rr, req)
 
 	res := rr.Result()
-	defer res.Body.Close()
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}()
 
 	if res.StatusCode != http.StatusOK {
 		t.Fatalf(
@@ -177,7 +189,11 @@ func TestGenerateHandlerInvalidMethod(t *testing.T) {
 	app.generateHandler(rr, req)
 
 	res := rr.Result()
-	defer res.Body.Close()
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}()
 
 	if res.StatusCode != http.StatusMethodNotAllowed {
 		t.Fatalf(
@@ -194,7 +210,9 @@ func TestGenerateHandlerMissingImage(t *testing.T) {
 	var body bytes.Buffer
 
 	writer := multipart.NewWriter(&body)
-	writer.Close()
+	if err := writer.Close(); err != nil {
+		t.Fatal(err)
+	}
 
 	req := httptest.NewRequest(
 		http.MethodPost,
@@ -212,7 +230,11 @@ func TestGenerateHandlerMissingImage(t *testing.T) {
 	app.generateHandler(rr, req)
 
 	res := rr.Result()
-	defer res.Body.Close()
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}()
 
 	if res.StatusCode != http.StatusBadRequest {
 		t.Fatalf(
@@ -239,7 +261,9 @@ func TestGenerateHandlerInvalidExtension(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	writer.Close()
+	if err := writer.Close(); err != nil {
+		t.Fatal(err)
+	}
 
 	req := httptest.NewRequest(
 		http.MethodPost,
@@ -257,7 +281,11 @@ func TestGenerateHandlerInvalidExtension(t *testing.T) {
 	app.generateHandler(rr, req)
 
 	res := rr.Result()
-	defer res.Body.Close()
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}()
 
 	if res.StatusCode != http.StatusBadRequest {
 		t.Fatalf(
@@ -305,7 +333,11 @@ func TestGenerateHandlerInvalidMIMEType(t *testing.T) {
 	app.generateHandler(rr, req)
 
 	res := rr.Result()
-	defer res.Body.Close()
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}()
 
 	if res.StatusCode != http.StatusBadRequest {
 		t.Fatalf(
@@ -388,7 +420,11 @@ func TestGenerateHandlerSuccess(t *testing.T) {
 	app.generateHandler(rr, req)
 
 	res := rr.Result()
-	defer res.Body.Close()
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}()
 
 	if res.StatusCode != http.StatusSeeOther {
 		t.Fatalf(

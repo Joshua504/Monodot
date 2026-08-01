@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"io"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -18,7 +19,7 @@ func validateExtension(filename string) error {
 	case ".jpg", ".jpeg", ".png":
 		return nil
 	default:
-		return errors.New("File not supported")
+		return errors.New("file not supported")
 	}
 }
 
@@ -36,7 +37,7 @@ func validateContentType(file multipart.File) error {
 	case "image/png", "image/jpeg":
 		// allowed
 	default:
-		return errors.New("Only PNG and JPEG images are allowed.")
+		return errors.New("only PNG and JPEG images are allowed")
 	}
 
 	_, err = file.Seek(0, io.SeekStart)
@@ -56,7 +57,13 @@ func saveUpload(file multipart.File, uploadPath string) error {
 	if err != nil {
 		return err
 	}
-	defer dst.Close()
+	defer func() {
+		if err := dst.Close(); err != nil {
+			// TODO: replace with slog later if this helper
+			// becomes part of application methods.
+			log.Printf("failed to close destination file: %v", err)
+		}
+	}()
 
 	_, err = io.Copy(dst, file)
 	if err != nil {
