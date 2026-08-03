@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>404 - Page Not Found</title>
-</head>
-<body>
-    <h1>404</h1>
-    <p>The page you're looking for doesn't exist.</p>
+{{define "title"}}404 - Page Not Found{{end}}
 
-    <a href="/static">Return Home</a>
-</body>
-</html>
+{{define "content"}}
+<h1>404</h1>
+
+<p>The page you're looking for doesn't exist.</p>
+
+<a href="/">Return Home</a>
+{{end}}

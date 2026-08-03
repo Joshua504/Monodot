@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"net/url"
 	"path/filepath"
 )
 
@@ -18,6 +19,11 @@ func main() {
 }
 
 func (app *application) homeHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		app.notFound(w)
+		return
+	}
+
 	app.render(
 		w,
 		http.StatusOK,
@@ -135,10 +141,32 @@ func (app *application) generateHandler(w http.ResponseWriter, r *http.Request) 
 		"Redirecting to result page",
 		"image", filepath.Base(outputPath),
 	)
+	params := url.Values{}
+
+	params.Set(
+		"image",
+		"/outputs/"+filepath.Base(outputPath),
+	)
+
+	params.Set(
+		"original",
+		"/uploads/"+uploadedFileName,
+	)
+
+	params.Set(
+		"name",
+		header.Filename,
+	)
+
+	params.Set(
+		"cellsize",
+		r.FormValue("cellSize"),
+	)
+
 	http.Redirect(
 		w,
 		r,
-		"/result?image=/outputs/"+filepath.Base(outputPath),
+		"/result?"+params.Encode(),
 		http.StatusSeeOther,
 	)
 }

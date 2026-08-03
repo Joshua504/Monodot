@@ -40,6 +40,22 @@ func newServer(cfg *Config) *http.Server {
 		),
 	)
 
+	mux.Handle(
+		"/uploads/",
+		http.StripPrefix(
+			"/uploads/",
+			http.FileServer(http.Dir(cfg.UploadDir)),
+		),
+	)
+
+	mux.Handle(
+		"/static/",
+		http.StripPrefix(
+			"/static/",
+			http.FileServer(http.Dir("static")),
+		),
+	)
+
 	mux.HandleFunc("/", app.homeHandler)
 	mux.HandleFunc("/generate", app.generateHandler)
 	mux.HandleFunc("/result", app.resultHandler)

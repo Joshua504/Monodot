@@ -6,15 +6,51 @@ Monodot
 
 <h1>Monodot</h1>
 <p>Turn images to beautiful monodot artwork</p>
-<form action="/generate" method="POST" enctype="multipart/form-data">
-    <div>
-        <input type="file" name="image" accept="image/*" required>
+
+<form  id="upload-form" action="/generate" method="POST" enctype="multipart/form-data">
+
+    <div id="drop-zone" class="drop-zone">
+
+        <input
+                id="file-input"
+                type="file"
+                name="image"
+                accept="image/*"
+                required
+                hidden
+        >
+
+        <div class="drop-zone-content">
+            <h3>📁 Drag & Drop an Image</h3>
+
+            <p>or click anywhere to browse</p>
+
+            <p id="file-name">
+                No file selected
+            </p>
+        </div>
+
+        <div id="preview-container" hidden>
+
+            <img
+                    id="preview-image"
+                    alt="Image Preview"
+            >
+
+            <div id="image-info">
+                <p id="image-size"></p>
+                <p id="image-dimensions"></p>
+            </div>
+
+        </div>
+
     </div>
 
     <br>
 
     <div>
         <label>Dot Size</label>
+
         <input
                 type="number"
                 name="cellSize"
@@ -26,9 +62,21 @@ Monodot
 
     <br>
 
-    <button type="submit">
+    <button id="generate-button" type="submit">
         Generate
     </button>
+
+    <div
+            id="loading"
+            hidden
+    >
+        <span class="spinner"></span>
+
+        <p>Generating artwork...</p>
+    </div>
+
 </form>
+
+<script src="/static/upload.js"></script>
 
 {{end}}
