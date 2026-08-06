@@ -1,0 +1,59 @@
+body {
+
+    background-color: var(--bg);
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+
+}
+
+body::before {
+
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -2;
+    background-image:
+            radial-gradient(
+                    red 2px,
+                    transparent 2px
+            );
+    background-size:20px 20px;
+}
+
+body::after {
+
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background:
+            linear-gradient(
+                    rgba(255,255,255,.015),
+                    transparent,
+                    rgba(255,255,255,.015)
+            );
+    opacity: .3;
+    animation: crtFlicker 8s infinite;
+
+}
+
+main {
+
+    position: relative;
+    z-index: 2;
+    width: min(1400px,92vw);
+    margin-inline: auto;
+
+}
+
+.section {
+
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-inline: var(--space-5);
+
+}

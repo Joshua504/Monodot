@@ -1,0 +1,88 @@
+/*
+========================================
+MONODOT DESIGN SYSTEM
+Version: 1.0
+========================================
+*/
+
+:root {
+
+    /* ==========================
+       COLORS
+    ========================== */
+
+    --bg: #050505;
+    --surface: #0E0E0E;
+    --surface-light: #171717;
+
+    --text: #F5F5F5;
+    --text-muted: #8C8C8C;
+
+    --accent: #FF6A00;
+    --accent-hover: #FF8129;
+    --accent-dark: #D94F00;
+
+    --success: #69F27D;
+    --warning: #FFD447;
+    --danger: #FF4C4C;
+
+    --border: #FFFFFF;
+
+    --shadow: #000000;
+
+    /* ==========================
+       TYPOGRAPHY
+    ========================== */
+
+    --font-display: "Pixelify Sans", sans-serif;
+    --font-body: "IBM Plex Mono", monospace;
+
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-md: 1rem;
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 2rem;
+    --font-size-2xl: 3rem;
+    --font-size-3xl: 5rem;
+    --font-size-4xl: 7rem;
+
+    /* ==========================
+       SPACING
+    ========================== */
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 16px;
+    --space-4: 24px;
+    --space-5: 32px;
+    --space-6: 48px;
+    --space-7: 64px;
+    --space-8: 96px;
+    --space-9: 128px;
+
+    /* ==========================
+       BORDERS
+    ========================== */
+
+    --border-width: 4px;
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+
+    /* ==========================
+       SHADOWS
+    ========================== */
+
+    --shadow-offset: 8px;
+
+    /* ==========================
+       ANIMATION
+    ========================== */
+
+    --speed-fast: .15s;
+    --speed-normal: .3s;
+    --speed-slow: .6s;
+
+    --ease: cubic-bezier(.22,.61,.36,1);
+
+}

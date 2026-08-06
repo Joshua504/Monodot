@@ -1,9 +1,13 @@
 package main
 
 import (
+	"image"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
+	"strconv"
+	"time"
 )
 
 func main() {
@@ -100,8 +104,22 @@ func (app *application) generateHandler(w http.ResponseWriter, r *http.Request) 
 
 	uploadedFileName := uniqueName(header.Filename)
 	uploadPath := filepath.Join(app.config.UploadDir, uploadedFileName)
-
 	outputPath := buildOutputPath(app.config.OutputDir, uploadedFileName)
+
+	config, _, err := image.DecodeConfig(file)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	width := config.Width
+	height := config.Height
+
+	_, err = file.Seek(0, 0)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
 
 	err = saveUpload(file, uploadPath)
 	app.logger.Info(
@@ -115,11 +133,31 @@ func (app *application) generateHandler(w http.ResponseWriter, r *http.Request) 
 
 	cellsize := parseCellSize(r, app.config.DefaultCellSize)
 
+	start := time.Now()
+
 	err = app.imageGenerator(
 		uploadPath,
 		outputPath,
 		cellsize,
 	)
+
+	processingTime := time.Since(start)
+
+	uploadInfo, err := os.Stat(uploadPath)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	outputInfo, err := os.Stat(outputPath)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	originalSize := formatFileSize(uploadInfo.Size())
+	generatedSize := formatFileSize(outputInfo.Size())
+
 	app.logger.Info(
 		"Starting image generation",
 		"cell_size", cellsize,
@@ -163,6 +201,31 @@ func (app *application) generateHandler(w http.ResponseWriter, r *http.Request) 
 		r.FormValue("cellSize"),
 	)
 
+	params.Set(
+		"time",
+		processingTime.Round(time.Millisecond).String(),
+	)
+
+	params.Set(
+		"width",
+		strconv.Itoa(width),
+	)
+
+	params.Set(
+		"height",
+		strconv.Itoa(height),
+	)
+
+	params.Set(
+		"originalsize",
+		originalSize,
+	)
+
+	params.Set(
+		"generatedsize",
+		generatedSize,
+	)
+
 	http.Redirect(
 		w,
 		r,
@@ -171,11 +234,44 @@ func (app *application) generateHandler(w http.ResponseWriter, r *http.Request) 
 	)
 }
 
-func (app *application) resultHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) resultHandler(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	image := r.URL.Query().Get("image")
+	original := r.URL.Query().Get("original")
+	fileName := r.URL.Query().Get("name")
+	processingTime := r.URL.Query().Get("time")
 
-	data := map[string]string{
-		"Image": image,
+	cellSize, _ := strconv.Atoi(
+		r.URL.Query().Get("cellsize"),
+	)
+
+	width, _ := strconv.Atoi(
+		r.URL.Query().Get("width"),
+	)
+
+	height, _ := strconv.Atoi(
+		r.URL.Query().Get("height"),
+	)
+
+	originalSize := r.URL.Query().Get("originalsize")
+
+	generatedSize := r.URL.Query().Get("generatedsize")
+
+	data := ResultPageData{
+		Image:    image,
+		Original: original,
+		FileName: fileName,
+
+		Width:  width,
+		Height: height,
+
+		OriginalSize:  originalSize,
+		GeneratedSize: generatedSize,
+
+		CellSize:       cellSize,
+		ProcessingTime: processingTime,
 	}
 
 	app.render(

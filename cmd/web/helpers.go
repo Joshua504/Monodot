@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"mime/multipart"
@@ -108,6 +109,22 @@ func statusColor(code int) string {
 		return "\033[34m" // Blue
 	default:
 		return "\033[31m" // Red
+	}
+}
+
+func formatFileSize(size int64) string {
+	const (
+		KB = 1024
+		MB = KB * 1024
+	)
+
+	switch {
+	case size >= MB:
+		return fmt.Sprintf("%.2f MB", float64(size)/float64(MB))
+	case size >= KB:
+		return fmt.Sprintf("%.2f KB", float64(size)/float64(KB))
+	default:
+		return fmt.Sprintf("%d B", size)
 	}
 }
 

@@ -1,0 +1,62 @@
+.hero {
+
+    display: grid;
+
+    gap: var(--space-6);
+
+}
+
+.hero__logo {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: var(--space-2);
+
+    font-family: var(--font-display);
+
+    font-size: var(--font-size-lg);
+
+}
+
+.hero__dot {
+
+    width: 18px;
+
+    height: 18px;
+
+    border-radius: 50%;
+
+    background: var(--accent);
+
+}
+
+/*.hero__title {*/
+
+/*    font-family: var(--font-display);*/
+
+/*    font-size: clamp(5.5rem, 15vw, 11rem);*/
+
+/*    line-height: .8;*/
+
+/*    text-transform: uppercase;*/
+
+/*    letter-spacing: -.04em;*/
+
+/*    max-width: 6ch;*/
+
+/*    text-wrap: balance;*/
+
+/*}*/
+.hero__title {
+    font-family: "Pixelify Sans", cursive !important;
+}
+
+.hero__subtitle {
+
+    max-width: 40ch;
+
+    font-size: var(--font-size-lg);
+
+}

@@ -91,3 +91,31 @@
     }
 
 }
+
+.comparison {
+
+    display: flex;
+
+    gap: 40px;
+
+    justify-content: center;
+
+    align-items: flex-start;
+
+    margin: 30px 0;
+
+}
+
+.comparison img {
+
+    max-width: 350px;
+
+    border-radius: 10px;
+
+}
+
+.comparison h2 {
+
+    text-align: center;
+
+}

@@ -4,79 +4,46 @@ Monodot
 
 {{define "content"}}
 
-<h1>Monodot</h1>
-<p>Turn images to beautiful monodot artwork</p>
+<section class="section hero-section">
 
-<form  id="upload-form" action="/generate" method="POST" enctype="multipart/form-data">
+    <div class="hero">
 
-    <div id="drop-zone" class="drop-zone">
+        <div class="hero__logo">
 
-        <input
-                id="file-input"
-                type="file"
-                name="image"
-                accept="image/*"
-                required
-                hidden
-        >
+            <div class="hero__dot"></div>
 
-        <div class="drop-zone-content">
-            <h3>📁 Drag & Drop an Image</h3>
-
-            <p>or click anywhere to browse</p>
-
-            <p id="file-name">
-                No file selected
-            </p>
-        </div>
-
-        <div id="preview-container" hidden>
-
-            <img
-                    id="preview-image"
-                    alt="Image Preview"
-            >
-
-            <div id="image-info">
-                <p id="image-size"></p>
-                <p id="image-dimensions"></p>
-            </div>
+            <span>MONODOT</span>
 
         </div>
 
+        <h1 class="hero__title">
+            FROM
+            <br>
+            PIXELS
+            <br>
+            TO
+            <br>
+            DOTS
+
+        </h1>
+
+        <p class="hero__subtitle">
+            Transform any image into handcrafted monochrome dot art.
+        </p>
+
+        <a href="#upload" class="hero__button">
+            START MACHINE
+        </a>
+
     </div>
 
-    <br>
+</section>
 
-    <div>
-        <label>Dot Size</label>
+<section
+        id="upload"
+        class="section"
+>
 
-        <input
-                type="number"
-                name="cellSize"
-                value="3"
-                min="1"
-                max="20"
-        >
-    </div>
-
-    <br>
-
-    <button id="generate-button" type="submit">
-        Generate
-    </button>
-
-    <div
-            id="loading"
-            hidden
-    >
-        <span class="spinner"></span>
-
-        <p>Generating artwork...</p>
-    </div>
-
-</form>
-
-<script src="/static/upload.js"></script>
+</section>
 
 {{end}}

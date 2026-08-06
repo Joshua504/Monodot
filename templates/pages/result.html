@@ -4,10 +4,90 @@ Result
 
 {{define "content"}}
 
-<h1>Your Image</h1>
+<h1>Generation Complete</h1>
 
-<img src="{{.Image}}">
+<div class="comparison">
+
+    <div>
+
+        <h2>Original</h2>
+
+        <img
+                src="{{.Original}}"
+                alt="Original Image"
+        >
+
+    </div>
+
+    <div>
+
+        <h2>Monodot</h2>
+
+        <img
+                src="{{.Image}}"
+                alt="Generated Image"
+        >
+
+    </div>
+
+</div>
+
+<hr>
+
+<h3>Image Information</h3>
+
+<ul>
+
+    <ul>
+
+        <ul>
+
+            <li>
+                <strong>File:</strong>
+                {{.FileName}}
+            </li>
+
+            <li>
+                <strong>Dimensions:</strong>
+                {{.Width}} × {{.Height}}
+            </li>
+
+            <li>
+                <strong>Original Size:</strong>
+                {{.OriginalSize}}
+            </li>
+
+            <li>
+                <strong>Generated Size:</strong>
+                {{.GeneratedSize}}
+            </li>
+
+            <li>
+                <strong>Dot Size:</strong>
+                {{.CellSize}}
+            </li>
+
+            <li>
+                <strong>Processing Time:</strong>
+                {{.ProcessingTime}}
+            </li>
+
+        </ul>
+
+    </ul>
+
+</ul>
+
+<br>
+
+<a href="{{.Image}}" download>
+    Download Image
+</a>
+
 <br><br>
-<a href="/">Generate Another</a>
+
+<a href="/">
+    Generate Another
+</a>
 
 {{end}}

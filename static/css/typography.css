@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Pixelify+Sans:wght@400;500;600;700&display=swap");
+html {
+
+    font-family: var(--font-body);
+
+    color: var(--text);
+
+    background: var(--bg);
+
+    text-rendering: optimizeLegibility;
+
+    -webkit-font-smoothing: antialiased;
+
+}
+
+body {
+
+    color: var(--text);
+
+    font-family: var(--font-body);
+
+}
+
+h1,
+h2,
+h3,
+h4 {
+
+    font-family: var(--font-display);
+
+    text-transform: uppercase;
+
+    line-height: .9;
+
+    letter-spacing: -.03em;
+
+}
+
+h1 {
+
+    font-size: clamp(4rem,10vw,8rem);
+
+}
+
+h2 {
+
+    font-size: clamp(2rem,5vw,4rem);
+
+}
+
+p {
+
+    color: var(--text-muted);
+
+    line-height: 1.8;
+
+}

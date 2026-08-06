@@ -1,0 +1,22 @@
+@keyframes crtFlicker {
+
+    0% {
+        opacity: 1;
+    }
+
+    97% {
+        opacity: 1;
+    }
+
+    98% {
+        opacity: .97;
+    }
+
+    99% {
+        opacity: .99;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
